@@ -7,6 +7,10 @@ parameters:
 
 services:
     # default configuration for services in *this* file
+    App\EventListener\JWTCreatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
