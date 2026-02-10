@@ -15,17 +15,17 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copier les fichiers composer.json et composer.lock
+# Copier les fichiers composer pour profiter du cache Docker
 COPY composer.json composer.lock ./
 
-# Installer les dépendances PHP
-RUN composer install --no-dev --optimize-autoloader
+# Installer les dépendances PHP (sans exécuter les scripts auto-scripts)
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Copier le code source Symfony
+# Copier le reste du code source Symfony
 COPY . .
 
-# Préparer Symfony (cache, assets si nécessaire)
-RUN php bin/console cache:clear --env=prod
+# Exécuter les scripts auto-scripts (cache:clear, etc)
+RUN composer run-script auto-scripts --no-dev
 
 # ------------------------------
 # Stage 2: Runtime

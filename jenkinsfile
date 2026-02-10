@@ -7,7 +7,7 @@ pipeline {
         GITHUB_TOKEN = credentials('github-token')
         RENDER_API_KEY = credentials('render-api-key')
         RENDER_APP_URL = credentials('render-app-url')
-        IMAGE_NAME = "${DOCKER_REGISTRY}/${DOCKER_CREDENTIALS_USR}/minaprosig"
+        IMAGE_NAME = "${DOCKER_REGISTRY}/${DOCKER_CREDENTIALS_USR}/yobalema"
         IMAGE_TAG = "latest"
         RENDER_SERVICE_ID = "srv-d4b6s7ili9vc73d9f2kg"
         APP_ENV = "prod"
