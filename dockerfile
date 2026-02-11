@@ -11,10 +11,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
+# Dépendances
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
+# Code source
 COPY . .
+
+# ⚠️ PAS de migration ici
 RUN php bin/console cache:clear --env=prod --no-debug
 
 
@@ -23,14 +27,14 @@ RUN php bin/console cache:clear --env=prod --no-debug
 # =========================
 FROM php:8.2-apache
 
-# 🔥 INSTALLER LE DRIVER POSTGRES ICI AUSSI
+# Extensions PostgreSQL (OBLIGATOIRE)
 RUN apt-get update && apt-get install -y libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Activer rewrite
+# Apache
 RUN a2enmod rewrite
 
-# DocumentRoot Symfony
+# DocumentRoot Symfony = /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
@@ -39,10 +43,14 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/conf-available/*.conf
 
 WORKDIR /var/www/html
+
+# Copier l'app buildée
 COPY --from=builder /app .
 
 # Permissions Symfony
 RUN chown -R www-data:www-data var
 
 EXPOSE 80
-CMD ["apache2-foreground"]
+
+# ✅ MIGRATIONS AU DÉMARRAGE + APACHE
+CMD sh -c "php bin/console doctrine:migrations:migrate --no-interaction || true && apache2-foreground"
