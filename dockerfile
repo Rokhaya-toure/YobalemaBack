@@ -48,11 +48,11 @@ COPY --from=builder /app .
 # Permissions Symfony
 RUN chown -R www-data:www-data var public
 
-# Port attendu par Render
+# Expose le port attendu par Render
 EXPOSE 10000
 
 # Script d'entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-CMD ["entrypoint.sh"]
+CMD ["sh", "/usr/local/bin/entrypoint.sh"]

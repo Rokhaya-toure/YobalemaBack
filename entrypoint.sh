@@ -12,6 +12,9 @@ php bin/console doctrine:migrations:migrate --no-interaction || true
 echo "Listen ${PORT}" >> /etc/apache2/ports.conf
 sed -i "s/:80/:${PORT}/g" /etc/apache2/sites-available/000-default.conf
 
+# Définir le ServerName pour éviter le warning
+echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Démarrer Apache en avant-plan
 echo "Starting Apache on port ${PORT}..."
-apache2-foreground
+exec apache2-foreground
