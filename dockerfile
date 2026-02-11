@@ -56,6 +56,7 @@ RUN php bin/console assets:install --symlink --relative public
 
 # Exporter le swagger JSON pour la prod
 RUN php bin/console api:swagger:export public/swagger.json || true
+
 # Script d'entrypoint pour lancer migrations + apache
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
