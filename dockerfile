@@ -18,7 +18,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Code source
 COPY . .
 
-# Clear cache
+# Clear cache prod
 RUN php bin/console cache:clear --env=prod --no-debug
 
 # =========================
@@ -46,13 +46,12 @@ WORKDIR /var/www/html
 COPY --from=builder /app .
 
 # Permissions Symfony
-RUN chown -R www-data:www-data var
+RUN chown -R www-data:www-data var public
 
-# Expose le port attendu par Render
-ENV PORT=10000
-EXPOSE $PORT
+# Port attendu par Render
+EXPOSE 10000
 
-# Script d'entrypoint pour lancer migrations + apache
+# Script d'entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
