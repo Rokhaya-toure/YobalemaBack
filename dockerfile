@@ -1,11 +1,12 @@
 # =========================
 # Stage 1: Builder
 # =========================
+# Stage 1: Builder
 FROM php:8.2-cli AS builder
 
 RUN apt-get update && apt-get install -y \
-    git unzip libicu-dev libonig-dev libzip-dev \
-    && docker-php-ext-install intl pdo pdo_mysql zip
+    git unzip libicu-dev libonig-dev libzip-dev libpq-dev \
+    && docker-php-ext-install intl pdo pdo_pgsql zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
