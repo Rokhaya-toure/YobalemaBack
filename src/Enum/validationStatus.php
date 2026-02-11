@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum StatutValidation: string
+enum  ValidationStatus: string
 {
     case EN_ATTENTE = 'en_attente';
     case VALIDE = 'valide';

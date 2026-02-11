@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Enum\StatutValidation;
+use App\Enum\ValidationStatus;
 use App\Repository\InfosConducteurRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,8 +30,8 @@ class InfosConducteur
     private ?User $utilisateur = null;
 
     // ✅ NOUVEAUX CHAMPS pour la validation
-    #[ORM\Column(type: 'string', enumType: StatutValidation::class)]
-    private StatutValidation $statut = StatutValidation::EN_ATTENTE;
+    #[ORM\Column(type: 'string', enumType: ValidationStatus::class)]
+    private ValidationStatus $statut = ValidationStatus::EN_ATTENTE;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateValidation = null;
@@ -53,7 +53,7 @@ class InfosConducteur
     {
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
-        $this->statut = StatutValidation::EN_ATTENTE;
+        $this->statut =ValidationStatus::EN_ATTENTE;
     }
 
     #[ORM\PreUpdate]
@@ -115,12 +115,12 @@ class InfosConducteur
 
     // ========== NOUVEAUX GETTERS & SETTERS ==========
 
-    public function getStatut(): StatutValidation
+    public function getStatut(): ValidationStatus
     {
         return $this->statut;
     }
 
-    public function setStatut(StatutValidation $statut): static
+    public function setStatut(ValidationStatus $statut): static
     {
         $this->statut = $statut;
         $this->updatedAt = new \DateTime();
@@ -186,16 +186,16 @@ class InfosConducteur
 
     public function isEnAttente(): bool
     {
-        return $this->statut === StatutValidation::EN_ATTENTE;
+        return $this->statut === ValidationStatus::EN_ATTENTE;
     }
 
     public function isValide(): bool
     {
-        return $this->statut === StatutValidation::VALIDE;
+        return $this->statut === ValidationStatus::VALIDE;
     }
 
     public function isRejete(): bool
     {
-        return $this->statut === StatutValidation::REJETE;
+        return $this->statut === ValidationStatus::REJETE;
     }
 }
