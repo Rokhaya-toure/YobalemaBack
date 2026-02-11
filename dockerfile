@@ -18,16 +18,15 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # Code source
 COPY . .
 
-# ⚠️ PAS de migration ici
+# Clear cache
 RUN php bin/console cache:clear --env=prod --no-debug
-
 
 # =========================
 # Stage 2: Runtime
 # =========================
 FROM php:8.2-apache
 
-# Extensions PostgreSQL (OBLIGATOIRE)
+# Extensions PostgreSQL
 RUN apt-get update && apt-get install -y libpq-dev \
     && docker-php-ext-install pdo pdo_pgsql
 
@@ -36,7 +35,6 @@ RUN a2enmod rewrite
 
 # DocumentRoot Symfony = /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf \
     /etc/apache2/apache2.conf \
@@ -50,7 +48,12 @@ COPY --from=builder /app .
 # Permissions Symfony
 RUN chown -R www-data:www-data var
 
-EXPOSE 80
+# Expose le port attendu par Render
+ENV PORT=10000
+EXPOSE $PORT
 
-# ✅ MIGRATIONS AU DÉMARRAGE + APACHE
-CMD sh -c "php bin/console doctrine:migrations:migrate --no-interaction || true && apache2-foreground"
+# Script d'entrypoint pour lancer migrations + apache
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+CMD ["entrypoint.sh"]
